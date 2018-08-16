@@ -49,5 +49,14 @@ func setupRedis() error {
 	if err!=nil{
 		return err
 	}
+
+	//配置https
+	beego.BConfig.Listen.EnableHTTPS = true
+	beego.BConfig.Listen.Graceful = true
+	beego.BConfig.Listen.HTTPSAddr = "127.0.0.1"
+	beego.BConfig.Listen.HTTPSPort = 8090
+	beego.BConfig.Listen.HTTPSCertFile="D:\\goWorkSpace\\src\\androidServer\\CARoot1024.crt"
+	beego.BConfig.Listen.HTTPSKeyFile ="D:\\goWorkSpace\\src\\androidServer\\CARoot1024.key"
+
 	return nil
 }
