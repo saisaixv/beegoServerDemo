@@ -76,6 +76,7 @@ func (this *BaseController)Prepare()  {
 		
 		rsp:=new(common.BaseRsp)
 		rsp.Error_code=common.ErrParamsError
+		this.SetRspCode(common.RSP_CODE_BAD_REQUEST)
 		this.Data["json"]=rsp
 		this.ServeJSON()
 		this.StopRun()
@@ -88,6 +89,7 @@ func (this *BaseController)Prepare()  {
 			rsp:=new(common.BaseRsp)
 			rsp.Error_code=common.ErrAuthFailed
 			this.Data["json"]=rsp
+			this.SetRspCode(common.RSP_CODE_UNAUTHORIZED)
 			this.ServeJSON()
 			this.StopRun()
 		}else{
@@ -136,4 +138,8 @@ func checkHttpHead(language string,timeZone int) bool {
 	}
 	
 	return true
+}
+
+func (this *BaseController)SetRspCode(code int)  {
+	this.Ctx.ResponseWriter.WriteHeader(code)
 }

@@ -14,6 +14,7 @@ const(
 
 
 	OK=0
+	ErrNotDefine=100	//未定义
 	ErrAuthFailed=101	//授权失败
 	ErrNickNameExist=102	//昵称已经存在
 	ErrAccountNotExist=103	//账号不存在

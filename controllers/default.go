@@ -60,14 +60,40 @@ type CaptchaController struct {
 }
 
 
+type NewsController struct {
+	BaseController
+}
+
 func (this *RegisterController)Post()  {
 	
 	req:=new(common.RegisterReq)
 	rsp:=new(common.RegisterRsp)
 	
 	defer func ()  {
-		this.Data["json"]=rsp
-		this.ServeJSON()
+
+		if err:=recover();err!=nil{
+
+			clog.Error(err)
+			rsp.Error_code=common.ErrNotDefine
+			this.SetRspCode(common.RSP_CODE_INTERNAL_SERVER_ERROR)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+			return
+		}
+
+		if rsp.Error_code!=common.OK{
+			this.SetRspCode(common.RSP_CODE_BAD_REQUEST)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+		}else{
+			this.Data["json"]=rsp
+			this.ServeJSON()
+		}
+	
 	}()
 
 	rsp.Error_code=common.OK
@@ -98,8 +124,28 @@ func (this *LoginController)Post()  {
 	rsp:=new(common.LoginRsp)
 
 	defer func ()  {
-		this.Data["json"]=rsp
-		this.ServeJSON()
+		if err:=recover();err!=nil{
+
+			clog.Error(err)
+			rsp.Error_code=common.ErrNotDefine
+			this.SetRspCode(common.RSP_CODE_INTERNAL_SERVER_ERROR)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+			return
+		}
+
+		if rsp.Error_code!=common.OK{
+			this.SetRspCode(common.RSP_CODE_BAD_REQUEST)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+		}else{
+			this.Data["json"]=rsp
+			this.ServeJSON()
+		}
 	}()
 
 
@@ -184,8 +230,28 @@ func (this *UserInfoController)Get()  {
 	rsp:=new(common.UserInfoRsp)
 
 	defer func ()  {
-		this.Data["json"]=rsp
-		this.ServeJSON()
+		if err:=recover();err!=nil{
+
+			clog.Error(err)
+			rsp.Error_code=common.ErrNotDefine
+			this.SetRspCode(common.RSP_CODE_INTERNAL_SERVER_ERROR)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+			return
+		}
+
+		if rsp.Error_code!=common.OK{
+			this.SetRspCode(common.RSP_CODE_BAD_REQUEST)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+		}else{
+			this.Data["json"]=rsp
+			this.ServeJSON()
+		}
 	}()
 
 	err:=models.GetUserInfo(this.User_id,rsp)
@@ -199,8 +265,28 @@ func (this *UserInfoController)Put()  {
 	rsp:=new(common.PutUserInfoRsp)
 
 	defer func ()  {
-		this.Data["json"]=rsp
-		this.ServeJSON()
+		if err:=recover();err!=nil{
+
+			clog.Error(err)
+			rsp.Error_code=common.ErrNotDefine
+			this.SetRspCode(common.RSP_CODE_INTERNAL_SERVER_ERROR)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+			return
+		}
+
+		if rsp.Error_code!=common.OK{
+			this.SetRspCode(common.RSP_CODE_BAD_REQUEST)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+		}else{
+			this.Data["json"]=rsp
+			this.ServeJSON()
+		}
 	}()
 
 	err:=this.FetchBodyJsonToOBJ(req)
@@ -221,14 +307,50 @@ func (this *UserInfoController)Put()  {
 	rsp.Error_code=common.OK
 }
 
+func (this *UserInfoController)GetUserNameById()  {
+	
+	id:=this.Ctx.Input.Param(":id")
+	rsp:=new(common.UserInfoRsp)
+
+	defer func ()  {
+		this.Data["json"]=rsp.Userinfo.Nickname
+		this.ServeJSON()
+	}()
+
+
+	models.GetUserInfo(id,rsp)
+
+
+}
+
 func (this *LogoutController)Post()  {
 	
 	// req:=new(common.LogoutReq)
 	rsp:=new(common.LogoutRsp)
 
 	defer func ()  {
-		this.Data["json"]=rsp
-		this.ServeJSON()
+		if err:=recover();err!=nil{
+
+			clog.Error(err)
+			rsp.Error_code=common.ErrNotDefine
+			this.SetRspCode(common.RSP_CODE_INTERNAL_SERVER_ERROR)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+			return
+		}
+
+		if rsp.Error_code!=common.OK{
+			this.SetRspCode(common.RSP_CODE_BAD_REQUEST)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+		}else{
+			this.Data["json"]=rsp
+			this.ServeJSON()
+		}
 	}()
 
 	rsp.Error_code=common.OK
@@ -247,8 +369,28 @@ func (this *PicController)Post()  {
 	rsp:=new(common.UploadPicRsp)
 
 	defer func ()  {
-		this.Data["json"]=rsp
-		this.ServeJSON()
+		if err:=recover();err!=nil{
+
+			clog.Error(err)
+			rsp.Error_code=common.ErrNotDefine
+			this.SetRspCode(common.RSP_CODE_INTERNAL_SERVER_ERROR)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+			return
+		}
+
+		if rsp.Error_code!=common.OK{
+			this.SetRspCode(common.RSP_CODE_BAD_REQUEST)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+		}else{
+			this.Data["json"]=rsp
+			this.ServeJSON()
+		}
 	}()
 	//获取上传的文件
 	f,h,err:=this.GetFile("myfile")
@@ -277,8 +419,28 @@ func (this * CaptchaController)GetCaptcha(){
 	rsp:=new(common.GetCaptchaRsp)
 
 	defer func ()  {
-		this.Data["json"]=rsp
-		this.ServeJSON()
+		if err:=recover();err!=nil{
+
+			clog.Error(err)
+			rsp.Error_code=common.ErrNotDefine
+			this.SetRspCode(common.RSP_CODE_INTERNAL_SERVER_ERROR)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+			return
+		}
+
+		if rsp.Error_code!=common.OK{
+			this.SetRspCode(common.RSP_CODE_BAD_REQUEST)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+		}else{
+			this.Data["json"]=rsp
+			this.ServeJSON()
+		}
 	}()
 
 	rsp.Error_code=common.OK
@@ -294,8 +456,28 @@ func (this *CaptchaController)VerifyCaptcha()  {
 	rsp:=new(common.VerifyCaptchaRsp)
 
 	defer func ()  {
-		this.Data["json"]=rsp
-		this.ServeJSON()
+		if err:=recover();err!=nil{
+
+			clog.Error(err)
+			rsp.Error_code=common.ErrNotDefine
+			this.SetRspCode(common.RSP_CODE_INTERNAL_SERVER_ERROR)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+			return
+		}
+
+		if rsp.Error_code!=common.OK{
+			this.SetRspCode(common.RSP_CODE_BAD_REQUEST)
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+		}else{
+			this.Data["json"]=rsp
+			this.ServeJSON()
+		}
 	}()
 
 	rsp.Error_code=common.OK
@@ -314,6 +496,17 @@ func (this *CaptchaController)VerifyCaptcha()  {
 		return
 	}
 }
+
+
+func (this *NewsController)Get()  {
+	id:=this.GetString("id")
+
+	defer func ()  {
+		this.Data["json"]=id
+		this.ServeJSON()
+	}()
+}
+
 
 
 
