@@ -25,6 +25,8 @@ const(
 	ErrLogoutFailed=108	//登出失败
 	ErrCaptchaVerifyError=109	//验证码确认失败
 	ErrTooManyErrorOfLogin=110	//登录错误次数超过10次
+	ErrChangePwdError=111	//修改密码失败
+	ErrOldPwdError=112	//原始密码不正确
 	
 
 )

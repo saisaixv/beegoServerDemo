@@ -3,7 +3,7 @@ package models
 import (
 
 	"fmt"
-	// "time"
+	"time"
 	// "strconv"
 
 	"androidServer/utils/db"
@@ -41,10 +41,17 @@ func Register( req *common.RegisterReq,rsp *common.RegisterRsp) (error,) {
 	}
 
 	//创建新的 用户插入表中
-	sql="insert into users (id,nickname,avatar) values (?,?,?);"
+	sql="insert into users (id,nickname,avatar,createtime) values (?,?,?,?);"
 	user_id:=utils.GetMongoObjectId()
+
+	now:=time.Now()
+
+	createtime:=fmt.Sprintf("%d-%d-%d %d:%d:%d",
+		now.Year(),now.Month(),now.Day(),now.Hour(),now.Minute(),now.Second())
+	
+
 	_,err=db.DoExec(common.DBmysqlAndroid,
-		sql,user_id,req.Nickname,req.Avatar)
+		sql,user_id,req.Nickname,req.Avatar,createtime)
 
 	if(err!=nil){
 		rsp.Error_code=-1
@@ -52,16 +59,17 @@ func Register( req *common.RegisterReq,rsp *common.RegisterRsp) (error,) {
 	}
 
 	
-	sql="insert into user_auths (user_id,identify_type,identifier,credential) values (?,?,?,?);"
+	sql="insert into user_auths (user_id,identify_type,identifier,credential,registertime) values (?,?,?,?,?);"
 
 	//用email注册
 	if req.Email!=""{
 		_,err=db.DoExec(common.DBmysqlAndroid,
-			sql,user_id,"email",req.Email,req.Credential)
+			sql,user_id,"email",req.Email,req.Credential,createtime)
 	
 		if(err!=nil){
 			rsp.Error_code=-1
-	
+			//注册失败，删除users表中的数据
+			db.DoExec(common.DBmysqlAndroid,"delete from users where id=?",user_id)
 			return err
 		}
 	}
@@ -69,20 +77,24 @@ func Register( req *common.RegisterReq,rsp *common.RegisterRsp) (error,) {
 	//用phone注册
 	if req.Phone!=""{
 		_,err=db.DoExec(common.DBmysqlAndroid,
-			sql,user_id,"phone",req.Phone,req.Credential)
+			sql,user_id,"phone",req.Phone,req.Credential,createtime)
 	
 		if(err!=nil){
 			rsp.Error_code=-1
-	
+			//注册失败，删除users表中的数据
+			db.DoExec(common.DBmysqlAndroid,"delete from users where id=?",user_id)
 			return err
 		}
 	}
 	
 
 	rsp.Error_code=common.OK
-	rsp.Userinfo.Id=user_id
-	rsp.Userinfo.Nickname=req.Nickname
-	rsp.Userinfo.Avatar=req.Avatar
+	rsp.UserInfo.Id=user_id
+	rsp.UserInfo.Nickname=req.Nickname
+	rsp.UserInfo.Avatar=req.Avatar
+	rsp.UserInfo.CreateTime=createtime
+	rsp.UserInfo.Phone=req.Phone
+	rsp.UserInfo.Email=req.Email
 
 	return nil
 }

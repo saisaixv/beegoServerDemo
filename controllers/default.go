@@ -51,6 +51,10 @@ type UserInfoController struct {
 	BaseController
 }
 
+type ChangePwdController struct {
+	BaseController
+}
+
 type PicController struct {
 	BaseController
 }
@@ -313,7 +317,7 @@ func (this *UserInfoController)GetUserNameById()  {
 	rsp:=new(common.UserInfoRsp)
 
 	defer func ()  {
-		this.Data["json"]=rsp.Userinfo.Nickname
+		this.Data["json"]=rsp.UserInfo.Nickname
 		this.ServeJSON()
 	}()
 
@@ -321,6 +325,23 @@ func (this *UserInfoController)GetUserNameById()  {
 	models.GetUserInfo(id,rsp)
 
 
+}
+
+func (this *UserInfoController)GetUserinfoList()  {
+	
+	rsp:=new(common.UserInfoLisRsp)
+
+	pageNum,_:=this.GetInt("pagenum")
+	pageSize,_:=this.GetInt("pagesize")
+
+	defer func ()  {
+		this.Data["json"]=rsp
+		this.ServeJSON()
+	}()
+
+	models.GetUserInfoList(pageNum,pageSize,rsp)
+
+	// clog.Trace(rsp.UserList)
 }
 
 func (this *LogoutController)Post()  {
@@ -508,6 +529,46 @@ func (this *NewsController)Get()  {
 }
 
 
+func (this *ChangePwdController)ChangePwd()  {
+	req:=new(common.ChangePwdReq)
+	rsp:=new(common.ChangePwdRsp)
 
+	rsp.Error_code=common.OK
+	defer func ()  {
+		
+		if err:=recover();err!=nil{
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			clog.Error(err)
+			this.Data["json"]=newRsp
+			this.ServeJSON()
+			return
+		}
+
+		if rsp.Error_code==common.OK{
+			this.Data["json"]=rsp
+		}else{
+			newRsp:=new(common.BaseRsp)
+			newRsp.Error_code=rsp.Error_code
+			this.Data["json"]=newRsp
+		}
+	
+		this.ServeJSON()
+	}()
+
+	err:=this.FetchBodyJsonToOBJ(req)
+	if err!=nil{
+		rsp.Error_code=common.ErrParamsError
+		clog.Error(err)
+		return
+	}
+
+	_,err =models.ChangePwd(this.User_id,req,rsp)
+
+	if err!=nil{
+		clog.Error(err)
+	}
+
+}
 
 

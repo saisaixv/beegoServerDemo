@@ -13,6 +13,8 @@ func init() {
 	beego.Router("/login", &controllers.LoginController{})
 	beego.Router("/logout", &controllers.LogoutController{})
 	beego.Router("/userinfo", &controllers.UserInfoController{})
+	beego.Router("/userinfolist", &controllers.UserInfoController{},"get:GetUserinfoList")
+	beego.Router("/changepwd",&controllers.ChangePwdController{},"post:ChangePwd")
 
 	//正则路由
 	beego.Router("/userinfo/:id/name", &controllers.UserInfoController{},"get:GetUserNameById")

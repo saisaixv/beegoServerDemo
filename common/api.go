@@ -8,6 +8,15 @@ type User struct {
 	Id string `json:"id"`
 	Nickname string `json:"nickname"`
 	Avatar string `json:"avatar"`
+	
+}
+
+type UserInfo struct {
+	User
+	CreateTime string `json:"createtime"`
+	UpdateTime string `json:"updatetime"`
+	Phone string `json:"phone"`
+	Email string `json:"email"`
 }
 
 type RegisterReq struct {
@@ -20,7 +29,7 @@ type RegisterReq struct {
 
 type RegisterRsp struct {
 	BaseRsp
-	Userinfo User `json:"userinfo"`
+	UserInfo UserInfo `json:"userinfo"`
 }
 
 type LoginReq struct {
@@ -53,17 +62,28 @@ type UserInfoReq struct {
 
 type UserInfoRsp struct {
 	BaseRsp
-	Userinfo User `json:"userinfo"`
+	UserInfo UserInfo `json:"userinfo"`
 }
 
 type PutUserInfoReq struct {
 	User_id string `json:"user_id"`
 	Nickname string `json:"nickname"`
 	Avatar string `json:"avatar"`
+	Phone string `json:"phone"`
+	Email string `json:"email"`
 }
 
 type PutUserInfoRsp struct {
 	BaseRsp
+}
+
+type UserInfoLisReq struct {
+	
+}
+
+type UserInfoLisRsp struct {
+	BaseRsp
+	UserList []User `json:"userlist"`
 }
 
 type UploadPicReq struct {
@@ -91,6 +111,16 @@ type VerifyCaptchaReq struct {
 }
 
 type VerifyCaptchaRsp struct {
+	BaseRsp
+}
+
+type ChangePwdReq struct {
+	OldPwd string `json:"old_password"`
+	NewPwd string 	`json:"new_password"`
+	VerifyPwd string `json:"verify_password"`
+}
+
+type ChangePwdRsp struct {
 	BaseRsp
 }
 
