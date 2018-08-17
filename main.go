@@ -21,6 +21,9 @@ func main() {
 	if err!=nil{
 		clog.Trace(err.Error())
 	}
+
+	setupHttps()
+
 	beego.Run()
 }
 
@@ -34,22 +37,27 @@ func setupDB() {
 
 	common.DBmysqlAndroid=db.OpenDB(url,max_lt,max_oc,max_ic)
 
-	clog.Trace("url: "+url+",max_lt: %d,max_oc: %d,max_ic: ",max_lt,max_oc,max_ic)
+	// clog.Trace("url: "+url+",max_lt: %d,max_oc: %d,max_ic: ",max_lt,max_oc,max_ic)
 
 }
 
 func setupRedis() error {
 	url:=beego.AppConfig.String("redis_android::url")
+	auth:=beego.AppConfig.String("redis_android::auth")
 	max_idles,_:=beego.AppConfig.Int("redis_android::max_idles")
 	idle_timeout,_:=beego.AppConfig.Int("redis_android::idle_timeout")
 
-	cache.Init(url,max_idles,idle_timeout,common.REDIS_DB_ANDROID)
+	cache.Init(url,auth,max_idles,idle_timeout,common.REDIS_DB_ANDROID)
 	
 	err:=cache.Ping()
 	if err!=nil{
 		return err
 	}
 
+	return nil
+}
+
+func setupHttps() error {
 	//配置https
 	beego.BConfig.Listen.EnableHTTPS = true
 	beego.BConfig.Listen.Graceful = true
@@ -57,6 +65,5 @@ func setupRedis() error {
 	beego.BConfig.Listen.HTTPSPort = 8090
 	beego.BConfig.Listen.HTTPSCertFile="D:\\goWorkSpace\\src\\androidServer\\CARoot1024.crt"
 	beego.BConfig.Listen.HTTPSKeyFile ="D:\\goWorkSpace\\src\\androidServer\\CARoot1024.key"
-
 	return nil
 }

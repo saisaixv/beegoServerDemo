@@ -15,7 +15,7 @@ var(
 	pool *redis.Pool
 )
 
-func newPool(url string,max_idle,idle_timeout int,db int)  *redis.Pool{
+func newPool(url string,auth string,max_idle,idle_timeout int,db int)  *redis.Pool{
 	timeout:=time.Duration(idle_timeout)*time.Second
 	return &redis.Pool{
 		MaxIdle:max_idle,
@@ -23,9 +23,16 @@ func newPool(url string,max_idle,idle_timeout int,db int)  *redis.Pool{
 		Dial:func () (redis.Conn,error) {
 			c,err:=redis.DialURL(url)
 			if err!=nil{
+				clog.Error(err)
 				return nil,err
 			}
+			//密码授权
+			if auth!=""{
+				c.Do("AUTH", auth)
+			}
+			
 			c.Do("SELECT",db)
+			
 			return c,err
 		},
 		TestOnBorrow:func (c redis.Conn,t time.Time) error {
@@ -33,13 +40,17 @@ func newPool(url string,max_idle,idle_timeout int,db int)  *redis.Pool{
 				return nil
 			}
 			_,err:=c.Do("PING")
+			if err!=nil{
+				clog.Error(err)
+				
+			}
 			return err
 		},
 	}
 }
 
-func Init(url string,max_idle,idle_timeout int,db int)  {
-	pool=newPool(url,max_idle,idle_timeout,db)
+func Init(url string,auth string,max_idle,idle_timeout int,db int)  {
+	pool=newPool(url,auth,max_idle,idle_timeout,db)
 }
 
 func  Get() redis.Conn {
