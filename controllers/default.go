@@ -333,13 +333,20 @@ func (this *UserInfoController)GetUserinfoList()  {
 
 	pageNum,_:=this.GetInt("pagenum")
 	pageSize,_:=this.GetInt("pagesize")
+	sex,err:=this.GetInt("sex")
+
+	if err!=nil && sex==0{
+		clog.Error(err)
+		sex=-1
+	}
+
 
 	defer func ()  {
 		this.Data["json"]=rsp
 		this.ServeJSON()
 	}()
 
-	models.GetUserInfoList(pageNum,pageSize,rsp)
+	models.GetUserInfoList(pageNum,pageSize,sex,rsp)
 
 	// clog.Trace(rsp.UserList)
 }

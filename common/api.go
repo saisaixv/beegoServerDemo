@@ -8,12 +8,13 @@ type User struct {
 	Id string `json:"id"`
 	Nickname string `json:"nickname"`
 	Avatar string `json:"avatar"`
+	Sex int `json:"sex"`
+	CreateTime string `json:createtime`
 	
 }
 
 type UserInfo struct {
 	User
-	CreateTime string `json:"createtime"`
 	UpdateTime string `json:"updatetime"`
 	Phone string `json:"phone"`
 	Email string `json:"email"`
@@ -83,7 +84,7 @@ type UserInfoLisReq struct {
 
 type UserInfoLisRsp struct {
 	BaseRsp
-	UserList []User `json:"userlist"`
+	UserInfoList []UserInfo `json:"userinfolist"`
 }
 
 type UploadPicReq struct {

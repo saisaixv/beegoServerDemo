@@ -2,7 +2,9 @@ package models
 
 import(
 
+	"fmt"
 	// "strings"
+	"strconv"
 
 	"androidServer/common"
 	"androidServer/utils/db"
@@ -101,52 +103,165 @@ func UpdateUserInfo(req *common.PutUserInfoReq) (bool,error) {
 	return db.DoExec(common.DBmysqlAndroid,sql,req.Nickname,req.Avatar,req.User_id)
 }
 
-func GetUserInfoList(pageNum int,pageSize int,rsp *common.UserInfoLisRsp) error {
+func GetUserInfoList(pageNum int,pageSize int,sex int,rsp *common.UserInfoLisRsp) error {
 
 
 	// var userList2 []common.User
 
+	fmt.Println(sex)
+
 	if pageNum!=0{
 	
-		sql:="select id,nickname,avatar from users limit ?,?;"
+		if sex==-1{
+			sql:="select id,nickname,avatar,sex,createtime from users limit ?,?;"
 
-		ret,err:=db.DoQuery(common.DBmysqlAndroid,sql,(pageNum-1)*pageSize,pageSize)
-		if err!=nil{
-			return err
+			ret,err:=db.DoQuery(common.DBmysqlAndroid,sql,(pageNum-1)*pageSize,pageSize)
+			if err!=nil{
+				return err
+			}
+			// clog.Trace(ret)
+	
+			for _,u := range ret{
+	
+				userInfo:=common.UserInfo{}
+				userInfo.Id=u[0]
+				userInfo.Nickname=u[1]
+				userInfo.Avatar=u[2]
+				userInfo.Sex,_=strconv.Atoi(u[3])
+				userInfo.CreateTime=u[4]
+
+				sql="select identify_type,identifier from user_auths where user_id=?;"
+				ret2,err:=db.DoQuery(common.DBmysqlAndroid,sql,userInfo.Id)
+				if err!=nil{
+					return err
+				}
+				for _,u2 := range ret2{
+				
+					if u2[0]=="phone"{
+						userInfo.Phone=u2[1]
+					}else if u2[0]=="email"{
+						userInfo.Email=u2[1]
+					}
+				}
+
+
+				rsp.UserInfoList=append(rsp.UserInfoList,userInfo)
+			}
+	
+		}else{
+			sql:="select id,nickname,avatar,sex,createtime from users where sex = ? limit ?,?;"
+
+			ret,err:=db.DoQuery(common.DBmysqlAndroid,sql,sex,(pageNum-1)*pageSize,pageSize)
+			if err!=nil{
+				return err
+			}
+			// clog.Trace(ret)
+	
+			for _,u := range ret{
+	
+				userInfo:=common.UserInfo{}
+				userInfo.Id=u[0]
+				userInfo.Nickname=u[1]
+				userInfo.Avatar=u[2]
+				userInfo.Sex,_=strconv.Atoi(u[3])
+				userInfo.CreateTime=u[4]
+
+				sql="select identify_type,identifier from user_auths where user_id=?;"
+				ret2,err:=db.DoQuery(common.DBmysqlAndroid,sql,userInfo.Id)
+				if err!=nil{
+					return err
+				}
+				for _,u2 := range ret2{
+				
+					if u2[0]=="phone"{
+						userInfo.Phone=u2[1]
+					}else if u2[0]=="email"{
+						userInfo.Email=u2[1]
+					}
+				}
+
+
+				rsp.UserInfoList=append(rsp.UserInfoList,userInfo)
+			}
+	
 		}
-		// clog.Trace(ret)
-
-		for _,u := range ret{
-
-			user:=common.User{}
-			user.Id=u[0]
-			user.Nickname=u[1]
-			user.Avatar=u[2]
-
-			rsp.UserList=append(rsp.UserList,user)
-		}
-
+		
 		// clog.Trace(rsp.List)
 		
 	}else{
-		sql:="select id,nickname,avatar from users;"
 
-		ret,err:=db.DoQuery(common.DBmysqlAndroid,sql)
-		if err!=nil{
-			return err
+		if sex==-1{
+			sql:="select id,nickname,avatar,sex,createtime from users;"
+
+			ret,err:=db.DoQuery(common.DBmysqlAndroid,sql)
+			if err!=nil{
+				return err
+			}
+			// clog.Trace(ret)
+	
+			for _,u := range ret{
+	
+				userInfo:=common.UserInfo{}
+				userInfo.Id=u[0]
+				userInfo.Nickname=u[1]
+				userInfo.Avatar=u[2]
+				userInfo.Sex,_=strconv.Atoi(u[3])
+				userInfo.CreateTime=u[4]
+
+				sql="select identify_type,identifier from user_auths where user_id=?;"
+				ret2,err:=db.DoQuery(common.DBmysqlAndroid,sql,userInfo.Id)
+				if err!=nil{
+					return err
+				}
+				for _,u2 := range ret2{
+				
+					if u2[0]=="phone"{
+						userInfo.Phone=u2[1]
+					}else if u2[0]=="email"{
+						userInfo.Email=u2[1]
+					}
+				}
+				rsp.UserInfoList=append(rsp.UserInfoList,userInfo)
+	
+			}
+		}else{
+			sql:="select id,nickname,avatar,sex,createtime from users where sex = ?;"
+
+			ret,err:=db.DoQuery(common.DBmysqlAndroid,sql,sex)
+			if err!=nil{
+				return err
+			}
+			// clog.Trace(ret)
+	
+			for _,u := range ret{
+	
+				userInfo:=common.UserInfo{}
+				userInfo.Id=u[0]
+				userInfo.Nickname=u[1]
+				userInfo.Avatar=u[2]
+				userInfo.Sex,_=strconv.Atoi(u[3])
+				userInfo.CreateTime=u[4]
+
+				sql="select identify_type,identifier from user_auths where user_id=?;"
+				ret2,err:=db.DoQuery(common.DBmysqlAndroid,sql,userInfo.Id)
+				if err!=nil{
+					return err
+				}
+				for _,u2 := range ret2{
+				
+					if u2[0]=="phone"{
+						userInfo.Phone=u2[1]
+					}else if u2[0]=="email"{
+						userInfo.Email=u2[1]
+					}
+				}
+
+
+				rsp.UserInfoList=append(rsp.UserInfoList,userInfo)
+	
+			}
 		}
-		// clog.Trace(ret)
-
-		for _,u := range ret{
-
-			user:=common.User{}
-			user.Id=u[0]
-			user.Nickname=u[1]
-			user.Avatar=u[2]
-
-			rsp.UserList=append(rsp.UserList,user)
-
-		}
+		
 		// clog.Trace(rsp.List)
 	}
 
